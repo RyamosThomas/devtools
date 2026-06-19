@@ -69,14 +69,16 @@ runs:
         SUFFIX: ${{ steps.cache-key-suffix.outputs.suffix }}
         PLATFORM_PAIR: ${{ steps.prepare.outputs.platform-pair }}
       run: |
+        LOWER_IMAGE=$(echo "${IMAGE}" | tr '[:upper:]' '[:lower:]')
         HASH=$(sha256sum <<< "${BUILD_ARGS}" | cut -d' ' -f1)
         CACHE_KEY="${PLATFORM_PAIR}-${HASH}"
         echo "cache-key-base=${CACHE_KEY}" >> $GITHUB_OUTPUT
+        echo "lower-image=${LOWER_IMAGE}" >> $GITHUB_OUTPUT
         if [[ "${{ github.event.pull_request.head.repo.fork }}" == "true" ]]; then
           # Essentially just ignore the cache output (forks can't write to registry cache)
           echo "cache-to=type=local,dest=/tmp/discard,ignore-error=true" >> $GITHUB_OUTPUT
         else
-          echo "cache-to=type=registry,ref=${IMAGE}-build-cache:${CACHE_KEY}-${SUFFIX},mode=max,compression=zstd" >> $GITHUB_OUTPUT
+          echo "cache-to=type=registry,ref=${LOWER_IMAGE}-build-cache:${CACHE_KEY}-${SUFFIX},mode=max,compression=zstd" >> $GITHUB_OUTPUT
         fi
 
     - name: Generate docker image tags
@@ -95,8 +97,8 @@ runs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-to: ${{ steps.cache-target.outputs.cache-to }}
         cache-from: |
-          type=registry,ref=${{ inputs.image }}-build-cache:${{ steps.cache-target.outputs.cache-key-base }}-${{ env.CACHE_KEY_SUFFIX }}
-          type=registry,ref=${{ inputs.image }}-build-cache:${{ steps.cache-target.outputs.cache-key-base }}-main
+          type=registry,ref=${{ steps.cache-target.outputs.lower-image }}-build-cache:${{ steps.cache-target.outputs.cache-key-base }}-${{ env.CACHE_KEY_SUFFIX }}
+          type=registry,ref=${{ steps.cache-target.outputs.lower-image }}-build-cache:${{ steps.cache-target.outputs.cache-key-base }}-main
         outputs: type=image,"name=${{ inputs.image }}",push-by-digest=true,name-canonical=true,push=${{ !github.event.pull_request.head.repo.fork }}
         target: ${{ inputs.target }}
         build-args: |
