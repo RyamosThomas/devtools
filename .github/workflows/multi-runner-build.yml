@@ -97,7 +97,7 @@ jobs:
           persist-credentials: false
           token: ${{ secrets.GITHUB_APP_TOKEN || github.token }}
 
-      - uses: RyamosThomas/devtools/actions/image-build@36d4713b40747bd3d01231ddedb3d71063b52403 # image-build-action-v0.1.10-fork
+      - uses: RyamosThomas/devtools/actions/image-build@2078071790a9dcfb6fc92445b6ab1069e74987cf # image-build-action-v0.1.10-fork
         with:
           context: ${{ inputs.context }}
           dockerfile: ${{ inputs.dockerfile }}
