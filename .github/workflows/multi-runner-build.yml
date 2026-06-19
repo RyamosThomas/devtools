@@ -113,6 +113,11 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !github.event.pull_request.head.repo.fork }}
     steps:
+      - name: Lowercase GHCR image name
+        id: lower
+        shell: bash
+        run: echo "ghcr-image=$(echo '${{ env.GHCR_IMAGE }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Install uv
         uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
 
@@ -151,7 +156,7 @@ jobs:
             # Disable latest tag
             latest=false
           images: |
-            name=${{ env.GHCR_IMAGE }}
+            name=${{ steps.lower.outputs.ghcr-image }}
             name=${{ env.DOCKERHUB_IMAGE }},enable=${{ inputs.dockerhub-push }}
           tags: |
             # Tag with branch name
@@ -171,6 +176,7 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         env:
           SUFFIXES: ${{ inputs.suffixes }}
+          GHCR_IMAGE_LOWER: ${{ steps.lower.outputs.ghcr-image }}
         shell: uv run --script {0}
         run: |
           # /// script
@@ -201,7 +207,7 @@ jobs:
             for tag in tags:
               docker_args["tags"].append(f"{tag}{suffix}")
 
-          ghcr_image = os.environ['GHCR_IMAGE']
+          ghcr_image = os.environ['GHCR_IMAGE_LOWER']
           digests = os.listdir(".")
           docker_args["sources"] = [f"{ghcr_image}@sha256:{digest}" for digest in digests]
 
