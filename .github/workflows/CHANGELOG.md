@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.2.0](https://github.com/immich-app/devtools/compare/multi-runner-build-workflow-v3.1.0...multi-runner-build-workflow-v3.2.0) (2026-06-19)
+
+
+### Features
+
+* run outline-role-sync as a cloudflare worker ([#1698](https://github.com/immich-app/devtools/issues/1698)) ([2057325](https://github.com/immich-app/devtools/commit/2057325ec6302b71fd9933de980a85b850da74b7))
+
+
+### Chores
+
+* deno ci type checks and linting ([#1694](https://github.com/immich-app/devtools/issues/1694)) ([2a0f12c](https://github.com/immich-app/devtools/commit/2a0f12c4ef714d0cebdf83511bbe57bd4c6dcfaf))
+* success-check for test-use-mise workflow ([#1687](https://github.com/immich-app/devtools/issues/1687)) ([807a734](https://github.com/immich-app/devtools/commit/807a734c9c24b6fec68356b0d840fe5aee405dfc))
+
 ## [3.1.0](https://github.com/immich-app/devtools/compare/multi-runner-build-workflow-v3.0.0...multi-runner-build-workflow-v3.1.0) (2026-06-16)
 
 
